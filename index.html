@@ -1,1 +1,101 @@
-﻿<!DOCTYPE html><html><head><meta http-equiv='refresh' content='0; url=https://notification-typical-shepherd-clinic.trycloudflare.com/'><title>Redirecionando para NEO Assistant</title><style>body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #0a0a0a; color: white; }.loader { border: 3px solid #333; border-top: 3px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin-right: 15px; }@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style></head><body><div class='loader'></div><p>Redirecionando para o NEO Assistant...</p><script>window.location.href = 'https://notification-typical-shepherd-clinic.trycloudflare.com/';</script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NEO">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <title>NEO Assistant</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background: #0a0a0a; color: white; margin: 0; text-align: center; padding: 20px; box-sizing: border-box; }
+        h1 { font-size: 28px; font-weight: 600; margin-bottom: 5px; letter-spacing: 2px; }
+        p { font-size: 16px; color: #bbb; margin-bottom: 40px; max-width: 400px; line-height: 1.5; }
+        .btn { display: inline-block; padding: 16px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; text-decoration: none; transition: 0.2s; border: none; width: 100%; max-width: 320px; box-sizing: border-box; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-install { background-color: #3498db; color: white; margin-bottom: 15px; display: none; /* starts hidden */ }
+        .btn-continue { background-color: #222; color: white; border: 1px solid #444; margin-bottom: 15px; }
+        .btn:hover { opacity: 0.9; transform: scale(0.98); }
+        #loading { margin-top: 30px; display: none; flex-direction: column; align-items: center; }
+        .spinner { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .icon-ghost { opacity: 0.2; width: 80px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <svg class="icon-ghost" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <h1>NEO</h1>
+        <p>Instale o aplicativo para uma experiência nativa em tela cheia, ou continue pelo navegador.</p>
+        
+        <button id="installBtn" class="btn btn-install">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Instalar App
+        </button>
+        <button id="continueBtn" class="btn btn-continue">
+            Acessar pelo Navegador
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+    </div>
+
+    <div id="loading">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; font-size: 16px; color: #888;">Conectando ao sistema...</p>
+    </div>
+
+    <script>
+        const targetUrl = "https://notification-typical-shepherd-clinic.trycloudflare.com";
+        const installBtn = document.getElementById('installBtn');
+        const continueBtn = document.getElementById('continueBtn');
+        const content = document.getElementById('content');
+        const loading = document.getElementById('loading');
+
+        function goToNeo() {
+            content.style.display = 'none';
+            loading.style.display = 'flex';
+            window.location.replace(targetUrl);
+        }
+
+        // Redireciona imediatamente se já estiver instalado (display-mode: standalone)
+        if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
+            goToNeo();
+        }
+
+        // Registra Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW falhou: ', err));
+            });
+        }
+
+        // Captura o evento de prompt de instalação
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // O navegador permite instalação, mostra botão!
+            installBtn.style.display = 'flex';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const result = await deferredPrompt.userChoice;
+                if (result.outcome === 'accepted') {
+                    console.log('App instalado');
+                    // Aguarda o app ser adicionado e redireciona (ou espera ele recarregar no standalone)
+                    setTimeout(goToNeo, 1500);
+                }
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            }
+        });
+
+        continueBtn.addEventListener('click', goToNeo);
+    </script>
+</body>
+</html>
