@@ -55,9 +55,11 @@
         const loading = document.getElementById('loading');
 
         function goToNeo() {
-            content.style.display = 'none';
-            loading.style.display = 'flex';
-            window.location.replace(targetUrl);
+            // Substitui o corpo inteiro pelo iframe do túnel
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
+            document.body.style.overflow = 'hidden';
+            document.body.innerHTML = '<iframe src="' + targetUrl + '" style="border: none; width: 100vw; height: 100vh; display: block; background: #0a0a0a;" allow="microphone; camera; display-capture; fullscreen; clipboard-read; clipboard-write"></iframe>';
         }
 
         // Redireciona imediatamente se já estiver instalado (display-mode: standalone)
