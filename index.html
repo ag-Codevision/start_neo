@@ -8,62 +8,213 @@
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="NEO">
+    <meta name="apple-mobile-web-app-title" content="_NEO">
     <link rel="apple-touch-icon" href="icon-192.png">
     
-    <title>NEO Assistant</title>
+    <!-- Google Fonts: Outfit and Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+    
+    <title>_NEO Assistant</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background: #0b0f19; color: white; margin: 0; text-align: center; padding: 20px; box-sizing: border-box; }
-        h1 { font-size: 28px; font-weight: 600; margin-bottom: 5px; letter-spacing: 2px; }
-        p { font-size: 16px; color: #bbb; margin-bottom: 40px; max-width: 400px; line-height: 1.5; }
-        .btn { display: inline-block; padding: 16px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; text-decoration: none; transition: 0.2s; border: none; width: 100%; max-width: 320px; box-sizing: border-box; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .btn-install { background-color: #3498db; color: white; margin-bottom: 15px; display: none; /* starts hidden */ }
-        .btn-continue { background-color: #222; color: white; border: 1px solid #444; margin-bottom: 15px; }
-        .btn:hover { opacity: 0.9; transform: scale(0.98); }
-        #loading { margin-top: 30px; display: none; flex-direction: column; align-items: center; }
-        .spinner { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        :root {
+            --color-background: #0b0f19;
+            --color-glass: rgba(15, 23, 42, 0.4);
+            --color-glass-border: rgba(255, 255, 255, 0.05);
+        }
+        body { 
+            font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: radial-gradient(circle at center, #111424 0%, #06080F 80%); 
+            color: #f8fafc; 
+            margin: 0; 
+            text-align: center; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            overflow: hidden;
+        }
+        .brand-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            margin-bottom: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .brand-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #0ea5e9; /* secondary glowing dot */
+            border-radius: 50%;
+            box-shadow: 0 0 10px #0ea5e9, 0 0 20px rgba(14, 165, 233, 0.5);
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.9); box-shadow: 0 0 5px #0ea5e9; }
+        }
+        p { 
+            font-size: 15px; 
+            color: #94a3b8; 
+            margin-bottom: 40px; 
+            max-width: 400px; 
+            line-height: 1.6; 
+            font-weight: 400;
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 16px 28px; 
+            font-size: 15px; 
+            font-weight: 500; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            text-decoration: none; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid var(--color-glass-border); 
+            width: 100%; 
+            max-width: 340px; 
+            box-sizing: border-box; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 12px; 
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .btn-install { 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(67, 56, 202, 0.9) 100%); 
+            color: white; 
+            margin-bottom: 16px; 
+            display: none; /* starts hidden */ 
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .btn-install:hover {
+             box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+             transform: translateY(-1px);
+        }
+        .btn-continue { 
+            background: var(--color-glass); 
+            color: #cbd5e1; 
+            margin-bottom: 20px; 
+        }
+        .btn-continue:hover { 
+            background: rgba(30, 41, 59, 0.6);
+            color: white;
+            border-color: rgba(255,255,255,0.1);
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: translateY(1px);
+        }
+        #loading { 
+            margin-top: 30px; 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        .spinner { 
+            border: 3px solid rgba(255,255,255,0.05); 
+            border-top: 3px solid rgba(99, 102, 241, 0.8); 
+            border-radius: 50%; 
+            width: 48px; 
+            height: 48px; 
+            animation: spin 1s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite; 
+            margin-bottom: 20px; 
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .icon-ghost { opacity: 0.2; width: 80px; margin-bottom: 20px; }
+        
+        /* Decorative Background Elements */
+        .decor-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .decor-1 {
+            top: -10%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: #6366f1;
+        }
+        .decor-2 {
+            bottom: -20%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: #0ea5e9;
+        }
     </style>
 </head>
 <body>
+    <div class="decor-circle decor-1"></div>
+    <div class="decor-circle decor-2"></div>
+    
     <div id="content">
-        <svg class="icon-ghost" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <h1>NEO</h1>
-        <p>Instale o aplicativo para uma experiência nativa em tela cheia, ou continue pelo navegador.</p>
+        <h1 class="brand-logo">
+            _NEO <div class="brand-dot"></div>
+        </h1>
+        <p>Instale o aplicativo para uma experiência nativa,<br/> livre de barras ou continue pelo navegador.</p>
         
         <button id="installBtn" class="btn btn-install">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-            Instalar App
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Instalar Web App
         </button>
         <button id="continueBtn" class="btn btn-continue">
-            Acessar pelo Navegador
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <span>Acessar via Navegador</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </button>
     </div>
 
     <div id="loading">
         <div class="spinner"></div>
-        <p style="margin-top: 15px; font-size: 16px; color: #888;">Conectando ao sistema...</p>
+        <p style="font-size: 14px; font-weight: 500; letter-spacing: 0.5px;">INICIALIZANDO LIGAÇÃO...</p>
     </div>
 
     <script>
-        const targetUrl = "https://notification-typical-shepherd-clinic.trycloudflare.com";
+        const targetUrl = "http://localhost:8000";
         const installBtn = document.getElementById('installBtn');
         const continueBtn = document.getElementById('continueBtn');
         const content = document.getElementById('content');
         const loading = document.getElementById('loading');
 
         function goToNeo() {
-            // Substitui o corpo inteiro pelo iframe do túnel
-            document.body.style.margin = '0';
-            document.body.style.padding = '0';
-            document.body.style.overflow = 'hidden';
-            document.body.innerHTML = '<iframe src="' + targetUrl + '" style="border: none; width: 100vw; height: 100vh; display: block; background: #0b0f19;" allow="microphone; camera; display-capture; fullscreen; clipboard-read; clipboard-write"></iframe>';
+            // Mostra o loading antes de redirecionar para não piscar
+            content.style.opacity = '0';
+            loading.style.display = 'flex';
+            setTimeout(() => {
+                document.body.style.margin = '0';
+                document.body.style.padding = '0';
+                document.body.style.overflow = 'hidden';
+                document.body.innerHTML = '<iframe src="' + targetUrl + '" style="border: none; width: 100vw; height: 100vh; display: block; background: #0b0f19;" allow="microphone; camera; display-capture; fullscreen; clipboard-read; clipboard-write"></iframe>';
+            }, 400);
         }
 
         // Redireciona imediatamente se já estiver instalado (display-mode: standalone)
         if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
+            // Transição suave
+            content.style.display = 'none';
             goToNeo();
         }
 
@@ -90,7 +241,7 @@
                 if (result.outcome === 'accepted') {
                     console.log('App instalado');
                     // Aguarda o app ser adicionado e redireciona (ou espera ele recarregar no standalone)
-                    setTimeout(goToNeo, 1500);
+                    setTimeout(goToNeo, 1000);
                 }
                 deferredPrompt = null;
                 installBtn.style.display = 'none';
